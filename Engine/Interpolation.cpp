@@ -98,7 +98,7 @@ cubicIntegrate(double c0,
     const double t4 = t3 * t;
     assert(t == t && t2 == t2 && t3 == t3 && t4 == t4 && c0 == c0 && c1 == c1 && c2 == c2 && c3 == c3);
 
-    return (c0 ? c0 * t : 0.) + (c1 ? c1 * t2 / 2. : 0.) + (c2 ? c2 * t3 / 3 : 0.) + (c3 ? c3 * t4 / 4 : 0.);
+    return (c0 ? c0 * t : 0.) + (c1 ? c1 * t2 / 2 : 0.) + (c2 ? c2 * t3 * (1./ 3) : 0.) + (c3 ? c3 * t4 / 4 : 0.);
 }
 
 // derive at t
@@ -1046,8 +1046,8 @@ Interpolation::autoComputeDerivatives(KeyframeTypeEnum interpPrev,
             /*Now that we have the derivative by catmull-rom's formula, we compute the bezier
                point on the left and on the right from the derivatives (i.e: P1 and Q2, Q being the segment before P)
              */
-            double P1 = P0 + P0pr / 3.;
-            double Q2 = Q3 - Q3pl / 3.;
+            double P1 = P0 + P0pr * (1./ 3);
+            double Q2 = Q3 - Q3pl * (1./ 3);
 
             /*We clamp Q2 to Q0(aka vprev) and Q3(aka vcur)
                and P1 to P0(aka vcur) and P3(aka vnext)*/
@@ -1110,7 +1110,7 @@ Interpolation::autoComputeDerivatives(KeyframeTypeEnum interpPrev,
 
     *vcurDerivRight = P0pr / (tnext - tcur); // denormalize for t \in [tcur,tnext]
     *vcurDerivLeft = Q3pl / (tcur - tprev); // denormalize for t \in [tprev,tcur]
-    assert( !boost::math::isnan(*vcurDerivRight) && !boost::math::isnan(*vcurDerivLeft) );
+    assert( !(boost::math::isnan)(*vcurDerivRight) && !(boost::math::isnan)(*vcurDerivLeft) );
 } // autoComputeDerivatives
 
 NATRON_NAMESPACE_EXIT

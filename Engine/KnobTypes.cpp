@@ -68,7 +68,6 @@ GCC_DIAG_UNUSED_LOCAL_TYPEDEFS_ON
 #include "Serialization/ProjectSerialization.h"
 #include "Serialization/KnobSerialization.h"
 
-
 NATRON_NAMESPACE_ENTER
 
 
@@ -670,6 +669,22 @@ ChoiceKnobDimView::ChoiceKnobDimView()
 , menuColors()
 {
 
+}
+
+int
+ChoiceKnobDimView::getValueFromKeyFrame(const KeyFrame& k)
+{
+    std::string optionID;
+    k.getPropertySafe(kKeyFramePropString, 0, &optionID);
+    {
+        QMutexLocker k(&valueMutex);
+        for (std::size_t i = 0 ; i < menuOptions.size(); ++i) {
+            if (optionID == menuOptions[i].id) {
+                return i;
+            }
+        }
+    }
+    return -1;
 }
 
 KeyFrame
@@ -2370,9 +2385,9 @@ KnobString::parseFont(const QString & label, int* fontSize, QString* fontFamily,
             }
             int red, green, blue;
             ColorParser::parseColor(currentColor, &red, &green, &blue);
-            *r = red / 255.0;
-            *g = green / 255.0;
-            *b = blue / 255.0;
+            *r = red * (1. / 255);
+            *g = green * (1. / 255);
+            *b = blue * (1. / 255);
         }
     }
     return true;
@@ -3412,10 +3427,10 @@ KnobParametric::addControlPoint(ValueChangedReasonEnum reason,
 {
     ///Mt-safe as Curve is MT-safe
     if ( ( dimension >= (int)_imp->common->defaultCurves.size() ) ||
-         ( key != key) || // check for NaN
-         boost::math::isinf(key) ||
-         ( value != value) || // check for NaN
-         boost::math::isinf(value) ) {
+         (boost::math::isnan)(key) || // check for NaN
+         (boost::math::isinf)(key) ||
+         (boost::math::isnan)(value) || // check for NaN
+         (boost::math::isinf)(value) ) {
         return eActionStatusFailed;
     }
 
@@ -3442,10 +3457,10 @@ KnobParametric::addControlPoint(ValueChangedReasonEnum reason,
 {
     ///Mt-safe as Curve is MT-safe
     if ( ( dimension >= (int)_imp->common->defaultCurves.size() ) ||
-         ( key != key) || // check for NaN
-         boost::math::isinf(key) ||
-         ( value != value) || // check for NaN
-         boost::math::isinf(value) ) {
+         (boost::math::isnan)(key) || // check for NaN
+         (boost::math::isinf)(key) ||
+         (boost::math::isnan)(value) || // check for NaN
+         (boost::math::isinf)(value) ) {
         return eActionStatusFailed;
     }
 

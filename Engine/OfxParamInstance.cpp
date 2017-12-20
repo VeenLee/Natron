@@ -5251,13 +5251,13 @@ OfxParametricInstance::addControlPoint(int curveIndex,
                                        double value,
                                        bool /* addAnimationKey*/)
 {
-    if ( (time != time) || // check for NaN
-         boost::math::isinf(time) ||
-         ( key != key) || // check for NaN
-         boost::math::isinf(key) ||
-         ( value != value) || // check for NaN
-         boost::math::isinf(value) ) {
-        return eActionStatusFailed;
+    if ( (boost::math::isnan)(time) || // check for NaN
+         (boost::math::isinf)(time) ||
+         (boost::math::isnan)(key) || // check for NaN
+         (boost::math::isinf)(key) ||
+         (boost::math::isnan)(value) || // check for NaN
+         (boost::math::isinf)(value) ) {
+        return kOfxStatFailed;
     }
 
     KnobParametricPtr knob = resolveRenderKnob<KnobParametric>(_knob.lock());

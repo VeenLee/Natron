@@ -32,14 +32,43 @@ Natron multiple times on the same computer, the different processes will share t
 - For convenience, a PyPlug may specify a list of the nodes inside its node graph that should have their viewer overlay displayed when the PyPlug setting panel is opened. For instance, imagine that the PyPlug uses a Transform node internally, it is possible to display the Transform node handle on the viewer when the PyPlug settings panel is opened, even if the Transform node panel itself is closed
 
 
+## Version 2.3.5
+
+### Plugins
+
+- DenoiseSharpen: fix a bug where the plugin would not abort processing when required.
+- ColorCorrect: fix luminance computation when applying saturation #1706
+
+
+## Version 2.3.4
+
+- Binaries distributed through Natron's web site are now built with 8-bit x264. 10-bit x264 (introduced with 2.2.6) causes too many compatibility issues. There are other codecs that support 10-bit output (especially ProRes, vc2, libopenjpeg, libvpx-vp9, and x265 on some systems). In order to get 10-bit x264, it is recommended to encode a quasi-lossless using one of these codecs, and then transcode with a ffmpeg binary capable of encoding 10-bit x264.
+- Work around a possible Qt/Linux  bug where tablet events have a negative pressure on Wacom Intuos tablet #1697
+- Binaries: add 10-bit HEVC encoding, Cisco openh264 encoding, VidVox Hap encoding.
+
+### Plugins
+
+- Upgrade SeExpr to version 2.11.
+- Grade: add a "Normalize" button to automatically compute the clack and white points.
+- Matrix3x3, Matrix5x5: new plugins, apply a 3x3 or 5x5 custom filter.
+- ColorCorrect: Fix wrong render for input values outside the [0-1] range #1703
+- ReadOIIO: Adjust Maximum Thr. (used when reading RAW camera files) should defaut to 0.0 #1705
+
+
+
 ## Version 2.3.3
 
+- Fix computation of remaining time when rendering.
+- Fix loading third-party plugins on Linux #1682
+
+### Plugins
+
 - ColorLookup: add "Master Curve Mode" parameter, which enable selecting different algorithms to apply the tone curve with more or less color shifting. These curve modes are inspired by [RawTherapee](http://rawpedia.rawtherapee.com/Exposure#Curve_Mode). Also add the possibility to compute and display the RGB histogram of the source input.
-- WriteFFmpeg: support 10-bit DNxHR 444 and DNxHR HQX.
+- WriteFFmpeg: support 10-bit DNxHR 444 and DNxHR HQX (and fix a related FFmpeg bug).
 - Shadertoy: rework many presets so that they work better with Natron, especially the effects in the Blur, Effect, and Source categories. Most blur effects can also be modulated per-pixel using the "Modulate" input to get Z-dependent blur.
 - Shadertoy: new presets: Blur/Bokeh Disc, Blur/Mipmap Blur, Effect/Anaglyphic, Effect/Bloom Paint, Effect/Sawnbringer 4bit, Effect/Sharpen, Effect/CRT, Effect/Fisheye, Effect/Image Cel Shade, Effect/Kaleidoscope, Effect/Noisy Mirror, Effect/Quad Mirror, Effect/Q*Bert-ify, Effect/Stripes, Effect/Vignette, Source/Cloud, Source/Cloudy Sky, Source/Disks, Source/Fireball, Source/Flash, Source/Seascape, Source/Star Nest, Source/Voronoi
 - Shadertoy: add iChannelOffset extension.
-- LensDistortion: add cropToFormat parameter (true by default)
+- LensDistortion: add cropToFormat parameter (true by default), to avoid computing areas outside of the project frame.
 
 
 ## Version 2.3.2
@@ -589,14 +618,14 @@ You can by-pass this behaviour and come-back to the original "Aggressive caching
 - When zooming out of the node-graph, all texts on nodes / arrows will be hidden to increase performances when handling huge compositions.
 - Tracker: all tracks are now multi-threaded for better performances. Also fixed a bug where the overlay displayed while tracking wasn't matching the underlying displayed image.
 - Roto: Selected points can now be dragged from everywhere within the bounding box instead of only the cross-hair.
-- Roto: It is now possible to move a bezier just by dragging a part of the curve where there is no control point.
+- Roto: It is now possible to move a Bezier just by dragging a part of the curve where there is no control point.
 - Roto: Holding shift while dragging a scale handle of the bounding box will now scale only the half of the shape on the side of the handle
 - Improved parameters alignment and spacing in the settings panel 
 - A new tab in the preferences is now dedicated to plug-ins management. You can now choose to enable/disable a plug-in. This can be seen as a blacklist of the plug-ins you don't want to use. By default most TuttleOFX nodes that are redundant with the bundled nodes will be disabled. 
 - Also another per plug-in control has been added to regulate whether the a plug-in should be aware of zoom levels or not. Zoom level aware means that a plug-in will attempt to render images at lower resolution if the viewer is zoomed-out or if proxy mode is enabled. This setting is set by the plug-in internally, but some plug-ins are known to be bugged (they flag that do support zoom levels but in fact they don't). 
 - A new changelog tab in the About window is now available
 - Roto: When restoring a project, the default tool will be "Select All" instead of "Bezier"
-to avoid creating new beziers by mistake
+to avoid creating new Beziers by mistake
 - Timeline: when pressing the left and right arrows of the keyboard, the cursor will no longer cross the bounds of the timeline but loop over the range instead.
 - Viewer: the drop-down to select the currently visualized channels now reflects the current choice with a specific border color for each options. 
 - A new Auto-turbo setting has been added: when enabled, the Turbo-mode (originally toggable with the button on the right of the media player) will be enabled/disabled automatically when playback is started/finished. You can turn on/off this preference in the settings (NodeGraph tab) or in the right click menu of the node-graph.
@@ -633,7 +662,7 @@ scroll the items by pressing the up/down arrows. Checkbox can now also have focu
 - The backdrop node now has its name in the header affected by the font family and color. However the size of the name is controlled by a different parameter so the name and the content can have different font sizes.
 - Roto: when selecting points with the selection rectangle, only points that belong to selected curves will be eligible for selection, unless no curve is selected, in which case all the points are eligible.
 - Roto : when selecting points with the selection rectangle, if the SHIFT modifier is held down, it will not clear the previous selection. Also when holding down SHIFT, clicking on a selected point will remove it from the selection. Similarly, if selecting points with the selection rectangle but while holding down both SHIFT and CTRL will now allow to keep the previous selection but remove from the selection the newly selected points.
-- Roto : the beziers animation can now be controlled in the curve editor, as well as the per-shape parameters.
+- Roto : the Beziers animation can now be controlled in the curve editor, as well as the per-shape parameters.
 - The ColorCorrect and Grade nodes can now choose on which channels to operate on, including the alpha channel
 - The viewer info bar font has been changed to the same font of the rest of the application and a line of 1 pixel now separates the Viewer from the informations.
 - The viewer refresh button will now be red when it is actively rendering (not using the cache).
@@ -660,7 +689,7 @@ scroll the items by pressing the up/down arrows. Checkbox can now also have focu
 - The tracker node now once again works on Windows.
 - Fixed a bug where color dialogs wouldn't refresh the color until the OK button was pressed
 - Fixed a bug where the bounding box of the image wasn't correct when using motion blur of the Transform node.
-- Fixed a bug where the bounding box of roto beziers wouldn't take the feather distance into account.
+- Fixed a bug where the bounding box of roto Beziers wouldn't take the feather distance into account.
 - Fixed a bug where changing the number of panels in the property bin wouldn't have any effect
 - Fixed a bug where CImg channels parameter wouldn't be saved into the project
 - The ColorLookUp node’s curve editor now properly gets keyboard focus
@@ -760,7 +789,7 @@ Then all file-paths that depended on this variable will be updated to point to t
 - File-paths are now "watched" by Natron: When a file changes outside of Natron, for example because another software have overwritten it or modified it, Natron will be notified and will reload the images.
 - New shortcuts editor: you can now customise the entire keyboard layout for the application.
 - Caching has been improved and should now be more aware of your system capabilities. It should strive for being as close possible to what the settings in the preferences are set to. Note that it might still need some tweeking on some platforms though because we're using system-dependents informations to make the Cache work.
-- You can now add control points/keyframes to curves by double-clicking on them. However, it doesn't apply for the Roto beziers.
+- You can now add control points/keyframes to curves by double-clicking on them. However, it doesn't apply for the Roto Beziers.
 - File dialog speed has been increased drastically
 - ReadFFMPEG: improve stability a lot
 - Parameters links and expressions are now displayed in the nodegraph (you can disable them in the right click menu).
@@ -779,7 +808,7 @@ anything any word , e.g: "Blur" and it will propose all types of Blurs.
 
 ## Version 0.96
 
-- Roto can now output RGBA colors and all beziers have a blending mode. It is now easier to layer your work within the same roto node.
+- Roto can now output RGBA colors and all Beziers have a blending mode. It is now easier to layer your work within the same roto node.
 - New Dot node to break connections and make cleaner graphs
 - New OCIOCDLTransform to apply an ASC Color decision list, it also supports the .ccc (Color correction collection) or .cc (Color correction) file formats.
 - New OCIOFileTransform to apply a transform from a given file. Supported formats:

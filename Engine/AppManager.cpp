@@ -23,7 +23,7 @@
 // ***** END PYTHON BLOCK *****
 
 #include "AppManager.h"
-#include "AppManagerPrivate.h"
+//#include "AppManagerPrivate.h" // include breakpad after Engine, because it includes /usr/include/AssertMacros.h on OS X which defines a check(x) macro, which conflicts with boost
 
 #if defined(__APPLE__) && defined(_LIBCPP_VERSION)
 #include <AvailabilityMacros.h>
@@ -38,7 +38,9 @@
 #if defined(_LIBCPP_USE_AVAILABILITY_APPLE)
 #error "this must be compiled with _LIBCPP_DISABLE_AVAILABILITY defined"
 #else
+#ifndef _LIBCPP_DISABLE_AVAILABILITY
 #define _LIBCPP_DISABLE_AVAILABILITY
+#endif
 #endif
 #endif
 #endif
@@ -152,6 +154,8 @@ GCC_DIAG_UNUSED_LOCAL_TYPEDEFS_ON
 #include "Serialization/SerializationIO.h"
 
 #include "sbkversion.h" // shiboken/pyside version
+
+#include "AppManagerPrivate.h" // include breakpad after Engine, because it includes /usr/include/AssertMacros.h on OS X which defines a check(x) macro, which conflicts with boost
 
 #if QT_VERSION < 0x050000
 Q_DECLARE_METATYPE(QAbstractSocket::SocketState)
@@ -571,7 +575,7 @@ AppManager::loadFromArgs(const CLArgs& cl)
         QString path = QCoreApplication::applicationDirPath() + QString::fromUtf8("/../Resources/etc/fonts");
         QFileInfo fileInfo(path);
         if ( !fileInfo.exists() ) {
-            std::cerr <<  "Fontconfig configuration file " << fileInfo.canonicalFilePath().toStdString() << " does not exist, not setting FONTCONFIG_PATH "<< std::endl;
+            std::cerr <<  "Fontconfig configuration file " << path.toStdString() << " does not exist, not setting FONTCONFIG_PATH "<< std::endl;
         } else {
             QString fcPath = fileInfo.canonicalFilePath();
 

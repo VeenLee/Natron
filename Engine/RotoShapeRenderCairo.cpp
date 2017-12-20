@@ -26,6 +26,10 @@
 
 #ifdef ROTO_SHAPE_RENDER_ENABLE_CAIRO
 
+GCC_DIAG_UNUSED_LOCAL_TYPEDEFS_OFF
+#include <boost/math/special_functions/fpclassify.hpp>
+GCC_DIAG_UNUSED_LOCAL_TYPEDEFS_ON
+
 #include <QLineF>
 
 #include <cairo/cairo.h>
@@ -41,9 +45,7 @@
 #include "Engine/RotoShapeRenderNode.h"
 #include "Engine/KnobTypes.h"
 
-
-
-//This will enable correct evaluation of beziers
+//This will enable correct evaluation of Beziers
 //#define ROTO_USE_MESH_PATTERN_ONLY
 
 
@@ -137,7 +139,7 @@ convertCairoImageToNatronImageForAccum_noColor(cairo_surface_t* cairoImg,
                 }
             }
             for (int c = 0; c < dstNComps; ++c) {
-                assert(*dst_pixels[c] == *dst_pixels[c]); // check for NaN
+                assert( !(boost::math::isnan)(*dst_pixels[c]) ); // check for NaN
                 dst_pixels[c] += dstPixelStride;
             }
             srcPix += srcNComps;
@@ -268,7 +270,7 @@ convertNatronImageToCairoImageForComponents(unsigned char* cairoImg,
                     dstPix[0] = Image::convertPixelDepth<float, unsigned char>(Image::convertPixelDepth<PIX, float>(*src_pixels[2]));
                     dstPix[1] = Image::convertPixelDepth<float, unsigned char>(Image::convertPixelDepth<PIX, float>(*src_pixels[1]));
                     dstPix[2] = Image::convertPixelDepth<float, unsigned char>(Image::convertPixelDepth<PIX, float>(*src_pixels[0]));
-                    dstPix[3] = 255; //(float)srcPix[x * srcNComps + 3] / maxValue * 255.f;
+                    dstPix[3] = 255; //(float)srcPix[x * srcNComps + 3] * (255.f / maxValue);
 
                 } else {
                     float pix = Image::convertPixelDepth<PIX, unsigned char>(*src_pixels[0]);
@@ -1113,16 +1115,16 @@ RotoShapeRenderCairo::renderFeather_old_cairo(const BezierPtr& bezier,
                                               double fallOff,
                                               cairo_pattern_t* mesh)
 {
-    ///Note that we do not use the opacity when rendering the bezier, it is rendered with correct floating point opacity/color when converting
+    ///Note that we do not use the opacity when rendering the Bezier, it is rendered with correct floating point opacity/color when converting
     ///to the Natron image.
 
     double fallOffInverse = 1. / fallOff;
     /*
      * We descretize the feather control points to obtain a polygon so that the feather distance will be of the same thickness around all the shape.
-     * If we were to extend only the end points, the resulting bezier interpolation would create a feather with different thickness around the shape,
+     * If we were to extend only the end points, the resulting Bezier interpolation would create a feather with different thickness around the shape,
      * yielding an unwanted behaviour for the end user.
      */
-    ///here is the polygon of the feather bezier
+    ///here is the polygon of the feather Bezier
     ///This is used only if the feather distance is different of 0 and the feather points equal
     ///the control points in order to still be able to apply the feather distance.
     std::vector<ParametricPoint> featherPolygon;
